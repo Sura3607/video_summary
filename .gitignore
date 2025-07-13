@@ -1,0 +1,47 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Logs and debug
+*.log
+*.tmp
+
+# Environment variables
+.env
+.env.*
+
+# Virtual environment
+venv/
+.env/
+.venv/
+
+# Output files
+output/
+*.json
+
+# Input video samples
+data/
+*.mp4
+*.avi
+*.mov
+
+# Jupyter notebooks (nếu test)
+*.ipynb
+.ipynb_checkpoints/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Test coverage / pytest
+htmlcov/
+.coverage
+.pytest_cache/
+
+# Docker
+*.dockerfile
