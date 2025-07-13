@@ -1,3 +1,4 @@
+```
 video_summary/
 ├── api/
 │   ├── __init__.py
@@ -37,3 +38,4 @@ video_summary/
 ├── .env.example
 ├── README.md
 └── CONTRIBUTING.md
+```
