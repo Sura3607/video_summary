@@ -4,14 +4,42 @@ Tài liệu này mô tả chi tiết vai trò, input/output, yêu cầu kỹ thu
 ## Mô tả luồng xử lý tổng thể
 
 ```
-graph TD
-    A[Input: .mp4 video] --> B[chunking.py]
-    B --> C[extract.py]
-    C --> D[embed.py]
-    C --> E[enrich.py]
-    D --> F[formatter.py]
-    E --> F
-    F --> G[Output: JSON file]
+        .mp4
+         │
+         ▼
+ ┌─────────────────────┐
+ │ core/chunking.py    │  →  List[Dict {start, end}]
+ └─────────────────────┘
+         │
+         ▼
+ ┌─────────────────────┐
+ │ core/extract.py     │
+ │ - get_keyframe()    │ → image (PIL)
+ │ - get_transcript()  │ → str (Whisper)
+ └─────────────────────┘
+         │
+         ▼
+ ┌─────────────────────┐
+ │ core/embed.py       │
+ │ - get_flava_vector()│ → np.ndarray (vector)
+ └─────────────────────┘
+         │
+         ▼
+ ┌─────────────────────┐
+ │ core/enrich.py      │
+ │ - summarize()       │ → str
+ │ - extract_keywords()│ → List[str]
+ └─────────────────────┘
+         │
+         ▼
+ ┌─────────────────────┐
+ │ core/formatter.py   │
+ │ → dict (final JSON) │
+ └─────────────────────┘
+         │
+         ▼
+     output/video_id.json
+
 ````
 
 ---
@@ -20,7 +48,7 @@ graph TD
 
 * **Vai trò:** Tách video thành các cảnh (scene)
 * **Input:** `video_path: str`
-* **Output:** `List[Dict[float, float]]` (start/end time)
+* **Output:** `List[Dict {start, end}]` (start/end time)
 * **Lưu ý:** Không có cảnh < 2s. Timestamp không được trùng.
 * **Test:** Các cảnh tuần tự và hợp lệ.
 
