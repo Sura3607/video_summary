@@ -32,6 +32,9 @@ video_summary/
 ├── output/
 │   └── sample1.json          # JSON kết quả sau xử lý
 │
+├── docs/
+│   └── module_spec.md 
+│
 ├── requirements.txt
 ├── Dockerfile
 ├── .gitignore
