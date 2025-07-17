@@ -13,11 +13,16 @@ class EmbeddingManager:
         self.load()
 
     def load(self):
-        self.processor = FlavaProcessor.from_pretrained("facebook/flava-full")
-        self.model = FlavaModel.from_pretrained("facebook/flava-full").to(self.device)
-        self.model.eval()
+        try:
+            self.processor = FlavaProcessor.from_pretrained("facebook/flava-full")
+            self.model = FlavaModel.from_pretrained("facebook/flava-full").to(self.device)
+            self.model.eval()
+        except Exception as e:
+            print(f"Error loading model embedding: {e}")
 
     def release(self):
+        if self.model is None or self.processor is None:
+            raise RuntimeError("Model is not loaded. Cannot release resources.")
         self.model = None
         self.processor = None
         torch.cuda.empty_cache()
