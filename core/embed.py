@@ -13,12 +13,15 @@ class EmbeddingManager:
         self.load()
 
     def load(self):
+        if self.model is not None:
+            return
+        
         try:
             self.processor = FlavaProcessor.from_pretrained("facebook/flava-full")
             self.model = FlavaModel.from_pretrained("facebook/flava-full").to(self.device)
             self.model.eval()
         except Exception as e:
-            print(f"Error loading model embedding: {e}")
+            raise RuntimeError(f"Failed to load FLAVA model: {e}")
 
     def release(self):
         if self.model is None or self.processor is None:
