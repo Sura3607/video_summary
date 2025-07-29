@@ -3,6 +3,7 @@ import sys
 import numpy as np
 from PIL import Image
 import pytest
+from sklearn.metrics.pairwise import cosine_similarity
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from core.embed import EmbeddingManager
@@ -30,18 +31,22 @@ def test_embedding_on_video_chunk():
 
     # Generate embedding
     embed_mgr = EmbeddingManager()
-    emb = embed_mgr.start(transcript, keyframe)
-    assert isinstance(emb, np.ndarray), "Embedding is not a numpy array."
-    assert emb.shape[0] > 0, "Embedding is empty."
-    assert np.isclose(np.linalg.norm(emb), 1.0, atol=1e-3), "Embedding is not normalized."
+    emb1 = embed_mgr.start(transcript, keyframe)
+    assert isinstance(emb1, np.ndarray), "Embedding is not a numpy array."
+    assert emb1.shape == (768,), f"Embedding shape is not (768,), got {emb1.shape}"
+    assert np.isclose(np.linalg.norm(emb1), 1.0, atol=1e-3), "Embedding is not normalized."
+
+    # Generate second embedding with same input to check similarity
+    emb2 = embed_mgr.start(transcript, keyframe)
+    assert emb2.shape == (768,), f"Second embedding shape is not (768,), got {emb2.shape}"
+
+    # Compute cosine similarity
+    cos_sim = cosine_similarity([emb1], [emb2])[0][0]
+    assert cos_sim > 0.9, f"Cosine similarity is too low: {cos_sim}"
 
     # Release resources
     embed_mgr.release()
     extract_mgr.release()
 
-    return emb
-
 if __name__ == "__main__":
-    test_embedding_on_video_chunk()
-
-
+    pytest.main([__file__])
