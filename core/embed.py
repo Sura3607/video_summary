@@ -42,11 +42,12 @@ class EmbeddingManager:
 
         with torch.no_grad():
             outputs = self.model(**inputs)
-            embedding = outputs.multimodal_projected_embedding[0]  
+            sequence_emb = outputs.multimodal_embeddings[0]
 
-        emb = embedding.cpu().numpy()
-        emb_norm = emb / np.linalg.norm(emb)
+        pooled = sequence_emb.mean(dim=0)  # shape (768,)
+        pooled_np = pooled.cpu().numpy()
+        normalized = pooled_np / np.linalg.norm(pooled_np)
 
-        return emb_norm
+        return normalized
         
 

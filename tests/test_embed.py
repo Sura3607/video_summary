@@ -9,7 +9,7 @@ from core.embed import EmbeddingManager
 from core.chunking import split_video_into_chunks
 from core.extract import ExtractManager
 
-SAMPLE_VIDEO = r""
+SAMPLE_VIDEO = r"D:\Project_Management\video_summary\data\Everyday English Conversation Practice ｜ 10 Minutes English Listening.mp4"
 
 @pytest.mark.skipif(not os.path.exists(SAMPLE_VIDEO), reason="Sample video not found.")
 def test_embedding_on_video_chunk():
@@ -38,3 +38,10 @@ def test_embedding_on_video_chunk():
     # Release resources
     embed_mgr.release()
     extract_mgr.release()
+
+    return emb
+
+if __name__ == "__main__":
+    test_embedding_on_video_chunk()
+
+
