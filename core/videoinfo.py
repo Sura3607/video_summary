@@ -1,6 +1,6 @@
 import base64
 
-class VideoMetadata:
+class VideoInfo:
     def __init__(self, video_id: str, source_path: str, duration: float):
         self.data = {
             "video_id": video_id,
