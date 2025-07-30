@@ -1,4 +1,6 @@
 from pathlib import Path
+import os
+import pytest 
 import sys
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
@@ -35,3 +37,5 @@ if __name__ == "__main__":
 # Caption: [Caption: a cartoon character with a speech bubble that says hello welcome to english practice]
 # Transcript: Hello, welcome to the English Easy.
 # Keywords: ['welcome english', 'english easy', 'hello', 'hello welcome', 'english']
+# pytest tests/test_enrich.py -s 
+# Output: passed
