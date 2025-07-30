@@ -4,33 +4,37 @@ import pytest
 import sys
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from core.enrich import EnrichManager
+from core.enrich import CaptionImage,KeywordExtractor
 from core.extract import ExtractManager
-def test_enrich():
-    video_path = Path(r"C:/Users/Acer/source/repos/AIC_2025/Everyday English Conversation Practice ｜ 30 Minutes English Listening.mp4")
-    start, end = 5, 10
+video_path = Path(r"C:/Users/Acer/source/repos/AIC_2025/Everyday English Conversation Practice ｜ 30 Minutes English Listening.mp4")
+start, end = 5, 10
 
-    extractor = ExtractManager()
-    keyframe = extractor.get_keyframe(video_path, start, end)
+extractor = ExtractManager()
+keyframe = extractor.get_keyframe(video_path, start, end)
 
+def test_caption():
     if keyframe is None:
         print("Không trích xuất được keyframe.")
         return
-    enricher = EnrichManager()
-    caption = enricher.captioning(keyframe)
+    enricher_cap = CaptionImage()
+    caption = enricher_cap.captioning(keyframe)
     print("Caption:", caption)
+    enricher_cap.release()
+ 
+def test_keyword_extractor():
+    enricher_keyw = KeywordExtractor()
     transcript = extractor.get_transcript(video_path, start, end)
     if not transcript.strip():
         print("Không có transcript.")
         return
     print("Transcript:", transcript)
-    keywords = enricher.extract_keywords(transcript)
+    keywords = enricher_keyw.extract_keywords(transcript)
     print("Keywords:", keywords)
-
-    enricher.release()
-
+    enricher_keyw.release()
+    
 if __name__ == "__main__":
-    test_enrich()
+    test_caption()
+    test_keyword_extractor()
     sys.exit(0)
     
 # Output:
