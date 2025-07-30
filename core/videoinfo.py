@@ -1,4 +1,6 @@
 import base64
+import io
+from PIL import Image
 
 class VideoInfo:
     def __init__(self, video_id: str, source_path: str, duration: float):
@@ -41,11 +43,12 @@ class VideoInfo:
         for chunk, v in zip(self.data["chunks"], vectors):
             chunk["vector"] = v
 
-    def add_frames(self, frames: list[bytes]):
-        for chunk, f in zip(self.data["chunks"], frames):
-            # encoded = base64.b64encode(f).decode("utf-8")
-            # chunk["frame"] = f"data:image/jpeg;base64,{encoded}"
-            pass
+    def add_frames(self, frames: list[Image.Image]):
+        for chunk, img in zip(self.data["chunks"], frames):
+            buffer = io.BytesIO()
+            img.save(buffer, format="JPEG")
+            encoded = base64.b64encode(buffer.getvalue()).decode("utf-8")
+            chunk["frame"] = f"data:image/jpeg;base64,{encoded}"
 
     def get_data(self):
         return self.data
