@@ -14,17 +14,15 @@ class CaptionImage:
         pass
     
     def load(self):
-        if self.model_captioning is not None and self.processor is not None and self.model_keyword is not None:
+        if self.model_captioning is not None and self.processor is not None:
             return  
 
         try:
             self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
             self.model_captioning = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to(self.device)
             self.model_captioning.eval()
-            self.model_keyword = KeyBERT()
             self.tokenizer = AutoTokenizer.from_pretrained("Salesforce/blip-image-captioning-base")
         except Exception as e:
-            print(f"[Error] Failed to load models in EnrichManager: {e}")
             raise RuntimeError(f"Model loading failed: {e}")
         
     def release(self):
@@ -52,7 +50,6 @@ class KeywordExtractor:
         try:
             self.model = KeyBERT()
         except Exception as e:
-            print(f"[Error] Failed to load models in KeywordExtractor: {e}")
             raise RuntimeError(f"Model loading failed: {e}")
         
     def release(self):
