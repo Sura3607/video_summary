@@ -14,4 +14,17 @@ class EnrichManager:
         self.model_captioning = None
         self.model_keyword = None
 
+    def captioning(self, image: Image.Image) -> str:
+        inputs = self.processor(images=image, return_tensors="pt").to(self.device)
+        out = self.model_captioning.generate(**inputs, max_length=30)
+        caption = self.processor.decode(out[0], skip_special_tokens=True)
+        return caption.strip()
     
+    def extract_keywords(self, text: str) -> List[str]:
+        keywords = self.model_keyword.extract_keywords(
+            text,
+            keyphrase_ngram_range=(1, 2),
+            stop_words='english',
+            top_n=5
+        )
+        return [kw for kw, _ in keywords]
