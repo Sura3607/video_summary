@@ -7,12 +7,29 @@ import torch
 class EnrichManager:
     def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-        self.model_captioning = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to(self.device)
-        self.model_keyword = KeyBERT()
+        self.model_captioning = None
+        self.processor = None
+        self.model_keyword = None
+        
+    def load(self):
+        if self.model_captioning is not None and self.processor is not None and self.model_keyword is not None:
+            return  
+
+        try:
+            self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+            self.model_captioning = BlipForConditionalGeneration.from_pretrained(
+                "Salesforce/blip-image-captioning-base"
+            ).to(self.device)
+            self.model_captioning.eval()
+            self.model_keyword = KeyBERT()
+        except Exception as e:
+            print(f"[Error] Failed to load models in EnrichManager: {e}")
+            raise RuntimeError(f"Model loading failed: {e}")
+        
     def release(self):
         self.model_captioning = None
         self.model_keyword = None
+        self.processor = None
 
     def captioning(self, image: Image.Image) -> str:
         inputs = self.processor(images=image, return_tensors="pt").to(self.device)
