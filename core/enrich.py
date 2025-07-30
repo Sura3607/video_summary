@@ -1,4 +1,4 @@
-from transformers import pipeline,BlipProcessor, BlipForConditionalGeneration
+from transformers import pipeline,BlipProcessor, BlipForConditionalGeneration,AutoTokenizer
 from keybert import KeyBERT
 from typing import List
 from PIL import Image
@@ -21,6 +21,7 @@ class EnrichManager:
             self.model_captioning = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to(self.device)
             self.model_captioning.eval()
             self.model_keyword = KeyBERT()
+            self.tokenizer = AutoTokenizer.from_pretrained("Salesforce/blip-image-captioning-base")
         except Exception as e:
             print(f"[Error] Failed to load models in EnrichManager: {e}")
             raise RuntimeError(f"Model loading failed: {e}")
@@ -34,7 +35,9 @@ class EnrichManager:
         self.load()
         inputs = self.processor(images=image, return_tensors="pt").to(self.device)
         out = self.model_captioning.generate(**inputs, max_length=30)
-        caption = self.processor.decode(out[0], skip_special_tokens=True)
+        from transformers import AutoTokenizer
+        tokenizer = AutoTokenizer.from_pretrained("Salesforce/blip-image-captioning-base")
+        caption = tokenizer.decode(out[0], skip_special_tokens=True)
         return caption.strip()
     
     def extract_keywords(self, text: str) -> List[str]:
