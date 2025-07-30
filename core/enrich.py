@@ -10,6 +10,7 @@ class EnrichManager:
         self.model_captioning = None
         self.processor = None
         self.model_keyword = None
+        pass
         
     def load(self):
         if self.model_captioning is not None and self.processor is not None and self.model_keyword is not None:
@@ -17,9 +18,7 @@ class EnrichManager:
 
         try:
             self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-            self.model_captioning = BlipForConditionalGeneration.from_pretrained(
-                "Salesforce/blip-image-captioning-base"
-            ).to(self.device)
+            self.model_captioning = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to(self.device)
             self.model_captioning.eval()
             self.model_keyword = KeyBERT()
         except Exception as e:
@@ -32,12 +31,14 @@ class EnrichManager:
         self.processor = None
 
     def captioning(self, image: Image.Image) -> str:
+        self.load()
         inputs = self.processor(images=image, return_tensors="pt").to(self.device)
         out = self.model_captioning.generate(**inputs, max_length=30)
         caption = self.processor.decode(out[0], skip_special_tokens=True)
         return caption.strip()
     
     def extract_keywords(self, text: str) -> List[str]:
+        self.load()
         keywords = self.model_keyword.extract_keywords(
             text,
             keyphrase_ngram_range=(1, 2),
