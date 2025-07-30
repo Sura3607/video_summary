@@ -1,5 +1,4 @@
-
-
+import base64
 
 class VideoMetadata:
     def __init__(self, video_id: str, source_path: str, duration: float):
