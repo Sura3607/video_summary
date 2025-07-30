@@ -3,15 +3,16 @@ from keybert import KeyBERT
 from typing import List
 from PIL import Image
 import torch
+
      
-class EnrichManager:
+class CaptionImage:
     def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model_captioning = None
         self.processor = None
-        self.model_keyword = None
+        self.load()
         pass
-        
+    
     def load(self):
         if self.model_captioning is not None and self.processor is not None and self.model_keyword is not None:
             return  
@@ -28,21 +29,38 @@ class EnrichManager:
         
     def release(self):
         self.model_captioning = None
-        self.model_keyword = None
         self.processor = None
+        torch.cuda.empty_cache()
 
     def captioning(self, image: Image.Image) -> str:
-        self.load()
         inputs = self.processor(images=image, return_tensors="pt").to(self.device)
         out = self.model_captioning.generate(**inputs, max_length=30)
-        from transformers import AutoTokenizer
-        tokenizer = AutoTokenizer.from_pretrained("Salesforce/blip-image-captioning-base")
+        tokenizer = self.tokenizer
         caption = tokenizer.decode(out[0], skip_special_tokens=True)
         return caption.strip()
     
-    def extract_keywords(self, text: str) -> List[str]:
+    
+class KeywordExtractor:
+    def __init__(self):
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.model = None
         self.load()
-        keywords = self.model_keyword.extract_keywords(
+        
+    def load(self):
+        if self.model is not None:
+            return  
+        try:
+            self.model = KeyBERT()
+        except Exception as e:
+            print(f"[Error] Failed to load models in KeywordExtractor: {e}")
+            raise RuntimeError(f"Model loading failed: {e}")
+        
+    def release(self):
+        self.model = None
+        torch.cuda.empty_cache()
+
+    def extract_keywords(self, text: str) -> List[str]:
+        keywords = self.model.extract_keywords(
             text,
             keyphrase_ngram_range=(1, 2),
             stop_words='english',
