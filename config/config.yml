@@ -1,21 +1,20 @@
-Model:
-  Embedding:
-    name: facebook/flava-full
-    type: huggingface
-    device: cuda  
+Embedding:
+  name: facebook/flava-full
+  type: huggingface
+  device: cuda  
 
-  Captioner:
-    name: Salesforce/blip-image-captioning-base
-    type: huggingface
-    device: cuda
+Captioner:
+  name: Salesforce/blip-image-captioning-base
+  type: huggingface
+  device: cuda
 
-  Transcriber:
-    name: openai/whisper-large-v3-turbo
-    type: huggingface
-    device: cuda
-    language: en
+Transcriber:
+  name: openai/whisper-large-v3-turbo
+  type: huggingface
+  device: cuda
+  language: en
 
-  KeywordExtractor:
-    name: KeyBERT
-    type: library
+KeywordExtractor:
+  name: KeyBERT
+  type: library
 
