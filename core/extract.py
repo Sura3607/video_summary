@@ -9,8 +9,8 @@ from datetime import timedelta
 
 class ExtractManager:
     def __init__(self):
-        self.model = whisper.load_model("medium")
-
+        # self.model = whisper.load_model("medium")
+        self.model = whisper.load_model("large-v3-turbo")
     def release(self):
         self.model = None
 
