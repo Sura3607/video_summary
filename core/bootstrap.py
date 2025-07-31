@@ -9,8 +9,6 @@ class ModelRegistry:
     caption_image: CaptionImage = None
     extract_manager: ExtractManager = None
 
-
-
 def load_all_models():
     config = load_config(config_path="config/config.yml")
     ModelRegistry.embedding_manager = EmbeddingManager().load(model_name=config["Embedding"]["name"])

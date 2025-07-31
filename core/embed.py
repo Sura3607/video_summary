@@ -6,11 +6,10 @@ from typing import Union
 from torchvision import transforms
 
 class EmbeddingManager:
-    def __init__(self):
-        self.model = None
-        self.processor = None
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.load()
+    def __init__(self, model, processor, device):
+        self.model = model
+        self.processor = processor
+        self.device = device
 
     @classmethod
     def load(cls, model_name="facebook/flava-full", device=None):
