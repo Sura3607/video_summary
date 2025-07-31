@@ -1,6 +1,7 @@
 from core.embed import EmbeddingManager
 from core.enrich import KeywordExtractor, CaptionImage
 from core.extract import ExtractManager
+from config.config import load_config
 
 class ModelRegistry:
     embedding_manager: EmbeddingManager = None
@@ -11,10 +12,11 @@ class ModelRegistry:
 
 
 def load_all_models():
-    ModelRegistry.embedding_manager = EmbeddingManager().load()
+    config = load_config(config_path="config/config.yml")
+    ModelRegistry.embedding_manager = EmbeddingManager().load(model_name=config["Embedding"]["name"])
     ModelRegistry.keyword_extractor = KeywordExtractor().load()
     ModelRegistry.caption_image = CaptionImage().load()
-    ModelRegistry.extract_manager = ExtractManager().load()
+    # ModelRegistry.extract_manager = ExtractManager().load()
 
     
     
