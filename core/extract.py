@@ -18,8 +18,10 @@ class ExtractManager:
     def load(cls, model_name ,device=None):
         if device is None:
             device = "cuda" if whisper.is_cuda_available() else "cpu"
-        
-        model = whisper.load_model(model_name, device=device)
+        try:
+            model = whisper.load_model(model_name, device=device)
+        except Exception as e:
+            raise RuntimeError(f"Model loading failed: {e}")
         return cls(model, device)
 
     def release(self):
