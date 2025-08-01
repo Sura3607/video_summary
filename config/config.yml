@@ -9,8 +9,8 @@ Captioner:
   device: cuda
 
 Transcriber:
-  name: openai/whisper-large-v3-turbo
-  type: huggingface
+  name: large-v3-turbo
+  type: library
   device: cuda
   language: en
 
