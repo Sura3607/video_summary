@@ -6,24 +6,22 @@ import torch
 
      
 class CaptionImage:
-    def __init__(self):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model_captioning = None
-        self.processor = None
-        self.load()
-        pass
-    
-    def load(self):
-        if self.model_captioning is not None and self.processor is not None:
-            return  
+    def __init__(self, model, processor, device):
+        self.device = device
+        self.model_captioning = model
+        self.processor = processor
 
+    @classmethod
+    def load(cls, model_name="Salesforce/blip-image-captioning-base", device=None):
+        device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         try:
-            self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-            self.model_captioning = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to(self.device)
-            self.model_captioning.eval()
-            self.tokenizer = AutoTokenizer.from_pretrained("Salesforce/blip-image-captioning-base")
+            processor = BlipProcessor.from_pretrained(model_name)
+            model_captioning = BlipForConditionalGeneration.from_pretrained(model_name).to(device)
+            model_captioning.eval()
+            tokenizer = AutoTokenizer.from_pretrained(model_name)
+            return cls(model_captioning, processor, tokenizer, device)
         except Exception as e:
-            raise RuntimeError(f"Model loading failed: {e}")
+            raise RuntimeError(f"Model Captioning loading failed: {e}")
         
     def release(self):
         self.model_captioning = None
