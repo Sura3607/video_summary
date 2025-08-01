@@ -37,21 +37,22 @@ class CaptionImage:
     
     
 class KeywordExtractor:
-    def __init__(self):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model = None
-        self.load()
+    def __init__(self,model,device):
+        self.device = device
+        self.model = model
         
-    def load(self):
-        if self.model is not None:
-            return  
+    @classmethod
+    def load(cls):
+        device = "cuda" if torch.cuda.is_available() else "cpu"
         try:
-            self.model = KeyBERT()
+            model = KeyBERT()
         except Exception as e:
             raise RuntimeError(f"Model loading failed: {e}")
-        
+        return cls(model, device)
+
     def release(self):
         self.model = None
+        self.device = None
         torch.cuda.empty_cache()
 
     def extract_keywords(self, text: str) -> List[str]:
