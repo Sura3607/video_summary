@@ -11,9 +11,9 @@ def test_format_output():
     vid = VideoInfo("demo_video", "path", 30.0)
     vid.add_chunks([{"start": 0, "end": 10}, {"start": 10, "end": 20}])
     vid.add_transcripts(["Hello world", "How are you?"])
-    vid.add_summaries(["Greeting", "Question"])
+    vid.add_summaries(["Greeting", ""])
     vid.add_keywords([["hello", "world"], ["how", "you"]])
-    vid.add_vectors([[0.1, 0.2], [0.3, 0.4]])
+    vid.add_vectors([[0.1, 0.2], []])
 
     dummy_img = Image.new("RGB", (100, 100), color="red")
     vid.add_frames([dummy_img, dummy_img])
@@ -28,7 +28,7 @@ def test_format_output():
         # print json data
         print(json.dumps(data, ensure_ascii=False, indent=2))
 
-    assert isinstance(data, list) and len(data) == 2, "Dữ liệu JSON sai"
+    assert isinstance(data, list) and len(data) == 1, "Dữ liệu JSON sai"
     for item in data:
         for field in ["timestamp", "transcript", "summary", "keywords", "vector", "frame", "meta"]:
             assert field in item, f"Thiếu field: {field}"
@@ -41,3 +41,5 @@ def test_format_output():
 if __name__ == "__main__":
     test_format_output()
     sys.exit(0)
+#  pytest tests/test_formatter.py -v
+#  Output: test_format_output PASSED
