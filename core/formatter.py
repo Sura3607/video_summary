@@ -8,6 +8,9 @@ from core.videoinfo import VideoInfo
 
 def format_output(video_id: VideoInfo) -> None:
     data = VideoInfo.get_data(self=video_id)
+    if not data or "video_id" not in data or "chunks" not in data:
+        raise ValueError("Dữ liệu video không hợp lệ")
+    
     video_id = data["video_id"]
     chunks = data["chunks"]
 
@@ -17,6 +20,13 @@ def format_output(video_id: VideoInfo) -> None:
 
     formatted_chunks = []
     for c in chunks:
+        if not c["vector"]:
+            print(f"Cảnh báo: Chunk {c['meta']['chunk_index']} không có vector, sẽ bỏ qua.")
+            continue
+        
+        if not c["summary"]:
+            print(f"Cảnh báo: Chunk {c['meta']['chunk_index']} không có summary")
+        
         formatted_chunks.append({
             "timestamp": f"{c['start']:.2f} - {c['end']:.2f}",
             "transcript": c["transcript"],
@@ -26,6 +36,8 @@ def format_output(video_id: VideoInfo) -> None:
             "frame": c["frame"],
             "meta": c["meta"]
         })
-
+    if not formatted_chunks:
+        raise ValueError("Không thể xuất dữ liệu do có chunk không có vector")
+    
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(formatted_chunks, f, ensure_ascii=False, indent=2)
