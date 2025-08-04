@@ -10,23 +10,23 @@ class ModelRegistry:
     extract_manager: ExtractManager = None
 
 def load_embedding_model(model_name: str):
-    ModelRegistry.embedding_manager = EmbeddingManager().load(model_name=model_name)
+    ModelRegistry.embedding_manager = EmbeddingManager.load(model_name=model_name)
 
 def load_keyword_model():
-    ModelRegistry.keyword_extractor = KeywordExtractor().load()
+    ModelRegistry.keyword_extractor = KeywordExtractor.load()
 
 def load_caption_model(model_name: str):
-    ModelRegistry.caption_image = CaptionImage().load(model_name=model_name)
+    ModelRegistry.caption_image = CaptionImage.load(model_name=model_name)
 
 def load_extract_model(model_name: str):
-    ModelRegistry.extract_manager = ExtractManager().load(model_name=model_name)
+    ModelRegistry.extract_manager = ExtractManager.load(model_name=model_name)
 
-def load_all_models():
-    config = load_config(config_path="config/config.yml")
+def load_all_models(config_path: str = "config/config.yaml"):
+    config = load_config(path = config_path)
     load_embedding_model(config["Embedding"]["name"])
     load_keyword_model()
-    load_caption_model(config["Caption"]["name"])
-    load_extract_model(config["Extract"]["name"])
+    load_caption_model(config["Captioner"]["name"])
+    load_extract_model(config["Transcriber"]["name"])
 
     
     
