@@ -10,14 +10,14 @@ from datetime import timedelta
 
 
 class ExtractManager:
-    def __init__(self,model: whisper.Model,device):
+    def __init__(self,model: whisper.model,device):
         self.model = model
         self.device = device
 
     @classmethod
     def load(cls, model_name ,device=None):
         if device is None:
-            device = "cuda" if whisper.is_cuda_available() else "cpu"
+            device = "cuda" if torch.cuda.is_available() else "cpu"
         try:
             model = whisper.load_model(model_name, device=device)
         except Exception as e:
