@@ -6,10 +6,11 @@ import torch
 
      
 class CaptionImage:
-    def __init__(self, model, processor, device):
+    def __init__(self, model, processor, tokenizer, device):
         self.device = device
         self.model_captioning = model
         self.processor = processor
+        self.tokenizer = tokenizer
 
     @classmethod
     def load(cls, model_name="Salesforce/blip-image-captioning-base", device=None):
