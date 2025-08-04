@@ -1,9 +1,13 @@
 import os
+from pathlib import Path
 import json
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from core.videoinfo import VideoInfo
 
-def format_ouptput(video_id: VideoInfo, chunk_data: VideoInfo) -> None:
-    data = VideoInfo.get_data()
+def format_output(video_id: VideoInfo) -> None:
+    data = VideoInfo.get_data(self=video_id)
     video_id = data["video_id"]
     chunks = data["chunks"]
 
