@@ -51,21 +51,21 @@ def format_output_image(image_info: ImageInfo) -> None:
     if not data["vector"]:
         raise ValueError("Không thể lưu vì thiếu vector")
 
-    if not data["summary"]:
-        print("Cảnh báo: Ảnh không có summary")
+    if not data.get("caption"):
+        print("Cảnh báo: Ảnh không có caption")
 
     output_dir = "output"
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f"{data['image_id']}.json")
 
     formatted_data = {
-        "image_id": data["image_id"],
-        "transcript": data["transcript"],
-        "summary": data["summary"],
-        "keywords": data["keywords"],
+        "id": data["image_id"],
+        "path": data["source_path"],
+        "caption": data.get("caption", ""),
+        "size": data.get("size", None),
         "vector": data["vector"],
-        "frame": data["frame"],
-        "meta": data["meta"]
+        "image": data.get("frame", None),
+        "meta": data.get("meta", {})
     }
 
     with open(output_path, "w", encoding="utf-8") as f:
