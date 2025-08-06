@@ -52,3 +52,37 @@ class VideoInfo:
 
     def get_data(self):
         return self.data
+    
+class ImageInfo:
+    def __init__(self, image_id: str, source_path: str):
+        self.data = {
+            "image_id": image_id,
+            "source_path": source_path,
+            "transcript": None,
+            "summary": None,
+            "keywords": [],
+            "vector": [],
+            "frame": None,
+            "meta": {}
+        }
+
+    def add_transcript(self, t: str):
+        self.data["transcript"] = t
+
+    def add_summary(self, s: str):
+        self.data["summary"] = s
+
+    def add_keywords(self, kw: list[str]):
+        self.data["keywords"] = kw
+
+    def add_vector(self, vec: list[float]):
+        self.data["vector"] = vec
+
+    def add_frame(self, img: Image.Image):
+        buffer = io.BytesIO()
+        img.save(buffer, format="JPEG")
+        encoded = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        self.data["frame"] = f"data:image/jpeg;base64,{encoded}"
+
+    def get_data(self):
+        return self.data
