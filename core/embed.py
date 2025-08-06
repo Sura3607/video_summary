@@ -6,22 +6,21 @@ from typing import Union
 from torchvision import transforms
 
 class EmbeddingManager:
-    def __init__(self):
-        self.model = None
-        self.processor = None
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.load()
+    def __init__(self, model, processor, device):
+        self.model = model
+        self.processor = processor
+        self.device = device
 
-    def load(self):
-        if self.model is not None:
-            return
-        
+    @classmethod
+    def load(cls, model_name="facebook/flava-full", device=None):
+        device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         try:
-            self.processor = FlavaProcessor.from_pretrained("facebook/flava-full")
-            self.model = FlavaModel.from_pretrained("facebook/flava-full").to(self.device)
-            self.model.eval()
+            processor = FlavaProcessor.from_pretrained(model_name)
+            model = FlavaModel.from_pretrained(model_name).to(device)
+            model.eval()
+            return cls(model, processor, device)
         except Exception as e:
-            raise RuntimeError(f"Failed to load FLAVA model: {e}")
+            raise RuntimeError(f"Failed to load Embedding model: {e}")
 
     def release(self):
         if self.model is None or self.processor is None:

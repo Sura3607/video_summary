@@ -6,8 +6,13 @@ video_summary/
 │   └── routes/
 │       └── process.py
 │
+├── config/
+│   ├── __init__.py
+│   ├── config.py            # Cấu hình chung
+│   └── config.yml           # Cấu hình model
 ├── core/
 │   ├── __init__.py
+│   ├── bootstrap.py 
 │   ├── chunking.py           # Tách scene
 │   ├── extract.py            # Whisper + keyframe
 │   ├── embed.py              # FLAVA embedding
@@ -18,13 +23,6 @@ video_summary/
 │   ├── run_single_video.py   # Test flow đơn giản
 │   └── run_batch.py          # Xử lý folder video
 │
-├── tests/
-│   ├── __init__.py
-│   ├── test_chunking.py
-│   ├── test_extract.py
-│   ├── test_embed.py
-│   ├── test_enrich.py
-│   └── test_formatter.py
 │
 ├── data/
 │   └── sample1.mp4           # Video mẫu để test

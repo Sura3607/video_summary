@@ -6,24 +6,23 @@ import torch
 
      
 class CaptionImage:
-    def __init__(self):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model_captioning = None
-        self.processor = None
-        self.load()
-        pass
-    
-    def load(self):
-        if self.model_captioning is not None and self.processor is not None:
-            return  
+    def __init__(self, model, processor, tokenizer, device):
+        self.device = device
+        self.model_captioning = model
+        self.processor = processor
+        self.tokenizer = tokenizer
 
+    @classmethod
+    def load(cls, model_name="Salesforce/blip-image-captioning-base", device=None):
+        device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         try:
-            self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-            self.model_captioning = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to(self.device)
-            self.model_captioning.eval()
-            self.tokenizer = AutoTokenizer.from_pretrained("Salesforce/blip-image-captioning-base")
+            processor = BlipProcessor.from_pretrained(model_name)
+            model_captioning = BlipForConditionalGeneration.from_pretrained(model_name).to(device)
+            model_captioning.eval()
+            tokenizer = AutoTokenizer.from_pretrained(model_name)
+            return cls(model_captioning, processor, tokenizer, device)
         except Exception as e:
-            raise RuntimeError(f"Model loading failed: {e}")
+            raise RuntimeError(f"Model Captioning loading failed: {e}")
         
     def release(self):
         self.model_captioning = None
@@ -39,21 +38,22 @@ class CaptionImage:
     
     
 class KeywordExtractor:
-    def __init__(self):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model = None
-        self.load()
+    def __init__(self,model,device):
+        self.device = device
+        self.model = model
         
-    def load(self):
-        if self.model is not None:
-            return  
+    @classmethod
+    def load(cls):
+        device = "cuda" if torch.cuda.is_available() else "cpu"
         try:
-            self.model = KeyBERT()
+            model = KeyBERT()
         except Exception as e:
             raise RuntimeError(f"Model loading failed: {e}")
-        
+        return cls(model, device)
+
     def release(self):
         self.model = None
+        self.device = None
         torch.cuda.empty_cache()
 
     def extract_keywords(self, text: str) -> List[str]:

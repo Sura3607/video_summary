@@ -1,18 +1,33 @@
 import cv2
 import os
 import tempfile
+import torch
 from typing import Union
 from PIL import Image
 from audio_extract import extract_audio
 import whisper
 from datetime import timedelta
 
+
 class ExtractManager:
-    def __init__(self):
-        self.model = whisper.load_model("small")
+    def __init__(self,model: whisper.model,device):
+        self.model = model
+        self.device = device
+
+    @classmethod
+    def load(cls, model_name ,device=None):
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        try:
+            model = whisper.load_model(model_name, device=device)
+        except Exception as e:
+            raise RuntimeError(f"Model loading failed: {e}")
+        return cls(model, device)
 
     def release(self):
         self.model = None
+        self.device = None
+        torch.cuda.empty_cache()
 
     def get_keyframe(self, video_path: Union[str, os.PathLike], start: float, end: float) -> Image.Image:
         cap = cv2.VideoCapture(str(video_path))
