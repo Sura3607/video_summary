@@ -52,3 +52,30 @@ class VideoInfo:
 
     def get_data(self):
         return self.data
+    
+class ImageInfo:
+    def __init__(self, image_id: str, source_path: str):
+        self.data = {
+            "id": image_id,                 
+            "path": source_path,            
+            "caption": None,                
+            "size": None,                    
+            "vector": [],                    
+            "image": None,                   
+        }
+
+    def add_caption(self, caption: str):
+        self.data["caption"] = caption
+
+    def add_vector(self, vec: list[float]):
+        self.data["vector"] = vec
+
+    def add_image(self, img: Image.Image):
+        buffer = io.BytesIO()
+        img.save(buffer, format="JPEG")
+        encoded = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        self.data["image"] = f"data:image/jpeg;base64,{encoded}"
+        self.data["size"] = img.size 
+
+    def get_data(self):
+        return self.data
