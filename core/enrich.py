@@ -1,8 +1,9 @@
-from transformers import pipeline,BlipProcessor, BlipForConditionalGeneration,AutoTokenizer
+from transformers import pipeline,BlipProcessor, BlipForConditionalGeneration,AutoTokenizer,CLIPProcessor
 from keybert import KeyBERT
 from typing import List
 from PIL import Image
 import torch
+from transformers import CLIPModel
 
      
 class CaptionImage:
@@ -64,3 +65,29 @@ class KeywordExtractor:
             top_n=5
         )
         return [kw for kw, _ in keywords]
+    
+class ClipRetriever:
+    def __init__(self):
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.model = None
+        self.processor = None
+        self.tokenizer = None
+        self.load()
+    
+    def load(self):
+        if self.model is not None and self.processor is not None:
+            return
+        try:
+            self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch16")
+            self.model = CLIPModel.from_pretrained("openai/clip-vit-base-patch16").to(self.device)
+            self.model.eval()
+            self.tokenizer = AutoTokenizer.from_pretrained("openai/clip-vit-base-patch16")
+        except Exception as e:
+            raise RuntimeError(f"Model loading failed: {e}")
+
+    def release(self):
+        self.model = None
+        self.processor = None
+        torch.cuda.empty_cache()
+
+    
