@@ -89,5 +89,22 @@ class ClipRetriever:
         self.model = None
         self.processor = None
         torch.cuda.empty_cache()
+        
+    def encode_image(self, image):
+        inputs = self.processor(images=image, return_tensors="pt").to(self.device)
+        with torch.no_grad():
+            emb = self.model.get_image_features(**inputs)
+        return emb / emb.norm(p=2, dim=-1, keepdim=True)
 
+    def encode_text(self, text):
+        inputs = self.processor(text=text, return_tensors="pt", padding=True).to(self.device)
+        with torch.no_grad():
+            emb = self.model.get_text_features(**inputs)
+        return emb / emb.norm(p=2, dim=-1, keepdim=True)
+
+    def similarity(self, image, texts):
+        image_emb = self.encode_image(image)
+        text_embs = self.encode_text(texts)
+        sim = torch.matmul(image_emb, text_embs.T)
+        return sim.squeeze().cpu().numpy()
     
