@@ -41,6 +41,8 @@ class VideoInfo:
 
     def add_vectors(self, vectors: list[list[float]]):
         for chunk, v in zip(self.data["chunks"], vectors):
+            if hasattr(v, "tolist"):  # numpy array 
+                v = v.tolist()
             chunk["vector"] = v
 
     def add_frames(self, frames: list[Image.Image]):
@@ -68,6 +70,8 @@ class ImageInfo:
         self.data["caption"] = caption
 
     def add_vector(self, vec: list[float]):
+        if hasattr(vec, "tolist"):  # numpy array
+            vec = vec.tolist()
         self.data["vector"] = vec
 
     def add_image(self, img: Image.Image):

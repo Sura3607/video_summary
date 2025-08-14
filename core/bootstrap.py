@@ -1,7 +1,7 @@
 from core.embed import EmbeddingManager
 from core.enrich import KeywordExtractor, CaptionImage
 from core.extract import ExtractManager
-from config.config import load_config
+from core.helper import load_config
 
 class ModelRegistry:
     embedding_manager: EmbeddingManager = None

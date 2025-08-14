@@ -18,7 +18,7 @@ def test_format_output_video():
     dummy_img = Image.new("RGB", (100, 100), color="red")
     vid.add_frames([dummy_img, dummy_img])
 
-    format_output_video(vid)
+    format_output_video(vid, "output")
 
     path = Path("output/demo_video.json")
     assert path.exists(), "Output file không tồn tại"
@@ -44,7 +44,7 @@ def test_format_output_image():
     img.add_caption("Sample image caption")  
     img.add_vector([0.1, 0.2, 0.3])
 
-    format_output_image(img)
+    format_output_image(img, "output")
 
     path = Path("output/demo_image.json")
     assert path.exists(), "Output file không tồn tại"
